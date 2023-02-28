@@ -4,3 +4,4 @@ pycocotools
 scipy
 six
 terminaltables
+pytorchcv==0.0.67
