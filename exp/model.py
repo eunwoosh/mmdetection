@@ -81,8 +81,6 @@ optimizer = dict(  # Config used to build optimizer, support all the optimizers 
     # grad_clip=None)  # Most of the methods do not use gradient clip
 optimizer_config = dict(type='Fp16OptimizerHook', grad_clip={'max_norm': 35, 'norm_type': 2},
                         distributed=False, loss_scale=512.0)
-lr_config = dict(interval=1, iteration_patience=0, metric='mAP', min_lr=1e-06, patience=5,
-                 policy='ReduceLROnPlateau', warmup='linear', warmup_iters=3, warmup_ratio=0.333333)
 lr_config = dict(policy='CosineAnnealing', min_lr=1e-06, by_epoch=True, warmup='linear', warmup_iters=3, warmup_ratio=0.333333)
 log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook', by_epoch=True)])
 
