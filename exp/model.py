@@ -1,6 +1,6 @@
 # hyper parameters
-num_classes = 2  # TODO need to align with dataset
-classes = ["normal", "abnormal"]  # TODO need to align with dataset
+num_classes = 20  # TODO need to align with dataset
+# classes = ["object"]  # TODO need to align with dataset
 
 # model.py
 model = dict(
@@ -71,18 +71,15 @@ log_level = 'DEBUG'  # The level of logging.
 workflow = [('train', 1)]  # Workflow for runner. [('train', 1)] means there is only one 
 runner = dict(
     type='EpochBasedRunner', # Type of runner to use (i.e. IterBasedRunner or EpochBasedRunner)
-    max_epochs=3) # Runner that runs the workflow in total max_epochs. For IterBasedRunner use `max_iters`
+    max_epochs=66) # Runner that runs the workflow in total max_epochs. For IterBasedRunner use `max_iters`
 optimizer = dict(  # Config used to build optimizer, support all the optimizers in PyTorch whose arguments are also the same as those in PyTorch
     type='SGD',
     lr=0.004,
     momentum=0.9,  # Momentum
     weight_decay=0.0001)  # Weight decay of SGD
-# optimizer_config = dict(  # Config used to build the optimizer hook, refer to https://github.com/open-mmlab/mmcv/blob/master/mmcv/runner/hooks/optimizer.py#L8 for implementation details.
-    # grad_clip=None)  # Most of the methods do not use gradient clip
-optimizer_config = dict(type='Fp16OptimizerHook', grad_clip={'max_norm': 35, 'norm_type': 2},
-                        distributed=False, loss_scale=512.0)
+optimizer_config = dict(grad_clip=None)
 lr_config = dict(policy='CosineAnnealing', min_lr=1e-06, by_epoch=True, warmup='linear', warmup_iters=3, warmup_ratio=0.333333)
-log_config = dict(interval=1, hooks=[dict(type='TextLoggerHook', by_epoch=True)])
+log_config = dict(interval=100, hooks=[dict(type='TextLoggerHook', by_epoch=True)])
 
 # data_pipeline.py
 train_pipeline = [
@@ -125,23 +122,32 @@ data = dict(
     samples_per_gpu=8,
     workers_per_gpu=2,
     train=dict(
-        type='CocoDataset',
-        classes=classes,
-        ann_file='/home/eunwoo/work/data/pcd-coco/annotations/instances_train10.json',
-        img_prefix='/home/eunwoo/work/data/pcd-coco/images/train/',
+        # type='VitensDataset',
+        # ann_file='/home/eunwoo/work/exp_resource/dataset/vitens-tiled-coco/12/annotations/instances_train.json',
+        # img_prefix='/home/eunwoo/work/exp_resource/dataset/vitens-tiled-coco/12/images/train/',
+        type='VOCDataset',
+        img_prefix='/home/eunwoo/work/data/voc/VOC2012/',
+        ann_subdir='/home/eunwoo/work/data/voc/VOC2012/Annotations',
+        ann_file='/home/eunwoo/work/data/voc/VOC2012/ImageSets/Main/train.txt',
         pipeline=train_pipeline),
     val=dict(
-        type='CocoDataset',
-        classes=classes,
-        ann_file='/home/eunwoo/work/data/pcd-coco/annotations/instances_val10.json',
-        img_prefix='/home/eunwoo/work/data/pcd-coco/images/val/',
+        # type='VitensDataset',
+        # ann_file='/home/eunwoo/work/exp_resource/dataset/vitens-tiled-coco/12/annotations/instances_val.json',
+        # img_prefix='/home/eunwoo/work/exp_resource/dataset/vitens-tiled-coco/12/images/val/',
+        type='VOCDataset',
+        img_prefix='/home/eunwoo/work/data/voc/VOC2012/',
+        ann_subdir='/home/eunwoo/work/data/voc/VOC2012/Annotations',
+        ann_file='/home/eunwoo/work/data/voc/VOC2012/ImageSets/Main/val.txt',
         test_mode=True,
         pipeline=test_pipeline),
     test=dict(
-        type='CocoDataset',
-        classes=classes,
-        ann_file='/home/eunwoo/work/data/pcd-coco/annotations/instances_val10.json',
-        img_prefix='/home/eunwoo/work/data/pcd-coco/images/val/',
+        # type='VitensDataset',
+        # ann_file='/home/eunwoo/work/exp_resource/dataset/vitens-tiled-coco/12/annotations/instances_val.json',
+        # img_prefix='/home/eunwoo/work/exp_resource/dataset/vitens-tiled-coco/12/images/val/',
+        type='VOCDataset',
+        img_prefix='/home/eunwoo/work/data/voc/VOC2012/',
+        ann_subdir='/home/eunwoo/work/data/voc/VOC2012/Annotations',
+        ann_file='/home/eunwoo/work/data/voc/VOC2012/ImageSets/Main/val.txt',
         test_mode=True,
         pipeline=test_pipeline)
 )
