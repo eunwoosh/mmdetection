@@ -71,9 +71,10 @@ optimizer = dict(  # Config used to build optimizer, support all the optimizers 
     lr=0.004,
     momentum=0.9,  # Momentum
     weight_decay=0.0001)  # Weight decay of SGD
-optimizer_config = dict(grad_clip=None)
 lr_config = dict(policy='CosineAnnealing', min_lr=1e-06, by_epoch=True, warmup='linear', warmup_iters=3, warmup_ratio=0.333333)
 log_config = dict(interval=100, hooks=[dict(type='TextLoggerHook', by_epoch=True)])
+fp16 = dict(loss_scale=512.0)
+optimizer_config = dict(grad_clip={'max_norm': 35, 'norm_type': 2},)
 
 # data_pipeline.py
 train_pipeline = [
